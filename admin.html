@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - BookSpace</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #ecf0f1;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --admin-primary: #34495e;
+            --admin-secondary: #2c3e50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #2c3e50;
+        }
+
+        .login-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--admin-primary) 0%, var(--admin-secondary) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, var(--admin-primary) 0%, var(--admin-secondary) 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .login-form {
+            padding: 2rem;
+        }
+
+        .admin-sidebar {
+            background: var(--admin-primary);
+            min-height: 100vh;
+            padding: 0;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            z-index: 1000;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .admin-sidebar.show {
+            transform: translateX(0);
+        }
+
+        .admin-sidebar-header {
+            background: var(--admin-secondary);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .admin-nav {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .admin-nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 15px 25px;
+            border-radius: 0;
+            margin: 0;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-left: 3px solid transparent;
+        }
+
+        .admin-nav-link:hover,
+        .admin-nav-link.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-left-color: var(--accent-color);
+        }
+
+        .admin-nav-link i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .admin-content {
+            margin-left: 0;
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
+        }
+
+        .admin-content.sidebar-open {
+            margin-left: 280px;
+        }
+
+        .admin-header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .admin-main {
+            padding: 2rem;
+        }
+
+        .stats-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border: none;
+            transition: transform 0.3s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stats-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stats-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .booking-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border: none;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .booking-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .booking-body {
+            padding: 1.5rem;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .status-approved {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-rejected {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .facility-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .facility-fitness {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+        }
+
+        .facility-cinema {
+            background-color: rgba(155, 89, 182, 0.1);
+            color: #9b59b6;
+        }
+
+        .facility-karaoke {
+            background-color: rgba(241, 196, 15, 0.1);
+            color: #f1c40f;
+        }
+
+        .facility-meeting {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+        }
+
+        .btn-admin-primary {
+            background: var(--admin-primary);
+            border-color: var(--admin-primary);
+            color: white;
+        }
+
+        .btn-admin-primary:hover {
+            background: var(--admin-secondary);
+            border-color: var(--admin-secondary);
+            color: white;
+        }
+
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: var(--admin-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        @media (max-width: 768px) {
+            .admin-content.sidebar-open {
+                margin-left: 0;
+            }
+            
+            .admin-main {
+                padding: 1rem;
+            }
+            
+            .stats-card {
+                margin-bottom: 1rem;
+            }
+        }
+
+        /* Dark theme for better admin feel */
+        .table-dark-custom {
+            background: var(--admin-primary);
+            color: white;
+        }
+
+        .table-dark-custom th {
+            border-color: rgba(255,255,255,0.2);
+            background: var(--admin-secondary);
+        }
+
+        .table-dark-custom td {
+            border-color: rgba(255,255,255,0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="display-4 mb-3">🔐</div>
+                <h2 class="h3 mb-0">Admin Login</h2>
+                <p class="mb-0 opacity-75">BookSpace Management System</p>
+            </div>
+            <div class="login-form">
+                <form id="loginForm">
+                    <div class="alert alert-danger d-none" id="loginError"></div>
+                    
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="username" required>
+                        <label for="username">Username</label>
+                    </div>
+                    
+                    <div class="form-floating mb-4">
+                        <input type="password" class="form-control" id="password" required>
+                        <label for="password">Password</label>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-admin-primary btn-lg">
+                            <i class="bi bi-box-arrow-in-right"></i> เข้าสู่ระบบ
+                        </button>
+                    </div>
+                    
+                    <div class="text-center mt-3">
+                        <small class="text-muted">
+                            Demo: admin / admin123
+                        </small>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="d-none">
+        <!-- Overlay for mobile -->
+        <div class="overlay" id="overlay"></div>
+        
+        <!-- Sidebar -->
+        <div class="admin-sidebar" id="adminSidebar">
+            <div class="admin-sidebar-header">
+                <h4 class="mb-1">
+                    <i class="bi bi-building"></i> BookSpace
+                </h4>
+                <small>Admin Panel</small>
+            </div>
+            
+            <nav class="admin-nav">
+                <a href="#" class="admin-nav-link active" data-page="overview">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>ภาพรวม</span>
+                </a>
+                <a href="#" class="admin-nav-link" data-page="bookings">
+                    <i class="bi bi-calendar-check"></i>
+                    <span>จัดการการจอง</span>
+                </a>
+                <a href="#" class="admin-nav-link" data-page="facilities">
+                    <i class="bi bi-building"></i>
+                    <span>สิ่งอำนวยความสะดวก</span>
+                </a>
+                <a href="#" class="admin-nav-link" data-page="reports">
+                    <i class="bi bi-graph-up"></i>
+                    <span>รายงาน</span>
+                </a>
+                <a href="#" class="admin-nav-link" data-page="settings">
+                    <i class="bi bi-gear"></i>
+                    <span>การตั้งค่า</span>
+                </a>
+                <hr class="my-3" style="border-color: rgba(255,255,255,0.2);">
+                <a href="#" class="admin-nav-link" onclick="logout()">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>ออกจากระบบ</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="admin-content" id="adminContent">
+            <!-- Header -->
+            <div class="admin-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-3">
+                        <button class="sidebar-toggle" id="sidebarToggle">
+                            <i class="bi bi-list"></i>
+                        </button>
+                        <h4 class="mb-0" id="pageTitle">ภาพรวม</h4>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="text-muted">ยินดีต้อนรับ, Admin</span>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> โปรไฟล์</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> การตั้งค่า</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" onclick="logout()"><i class="bi bi-box-arrow-right"></i> ออกจากระบบ</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="admin-main">
+                <!-- Overview Page -->
+                <div id="overviewPage" class="page-content">
+                    <!-- Stats Cards -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-lg-3 col-md-6">
+                            <div class="stats-card">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div class="stats-number text-primary" id="totalBookingsCount">0</div>
+                                        <div class="stats-label">การจองทั้งหมด</div>
+                                    </div>
+                                    <i class="bi bi-calendar-check text-primary fs-1 opacity-25"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="stats-card">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div class="stats-number text-warning" id="pendingBookingsCount">0</div>
+                                        <div class="stats-label">รอการอนุมัติ</div>
+                                    </div>
+                                    <i class="bi bi-clock text-warning fs-1 opacity-25"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="stats-card">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div class="stats-number text-success" id="approvedBookingsCount">0</div>
+                                        <div class="stats-label">อนุมัติแล้ว</div>
+                                    </div>
+                                    <i class="bi bi-check-circle text-success fs-1 opacity-25"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="stats-card">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div class="stats-number text-danger" id="rejectedBookingsCount">0</div>
+                                        <div class="stats-label">ปฏิเสธแล้ว</div>
+                                    </div>
+                                    <i class="bi bi-x-circle text-danger fs-1 opacity-25"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Bookings -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header bg-white">
+                                    <h5 class="card-title mb-0">การจองล่าสุด</h5>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover mb-0">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>ชื่อผู้จอง</th>
+                                                    <th>สิ่งอำนวยความสะดวก</th>
+                                                    <th>วันที่</th>
+                                                    <th>เวลา</th>
+                                                    <th>สถานะ</th>
+                                                    <th>การดำเนินการ</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="recentBookingsTable">
+                                                <!-- Table rows will be generated here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bookings Management Page -->
+                <div id="bookingsPage" class="page-content d-none">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3>จัดการการจอง</h3>
+                        <div class="d-flex gap-2">
+                            <select class="form-select" id="statusFilter" style="width: auto;">
+                                <option value="">สถานะทั้งหมด</option>
+                                <option value="pending">รอการอนุมัติ</option>
+                                <option value="approved">อนุมัติแล้ว</option>
+                                <option value="rejected">ปฏิเสธแล้ว</option>
+                            </select>
+                            <select class="form-select" id="facilityFilter" style="width: auto;">
+                                <option value="">สิ่งอำนวยความสะดวกทั้งหมด</option>
+                                <option value="fitness">ห้องฟิตเนส</option>
+                                <option value="cinema">ห้องดูหนัง</option>
+                                <option value="karaoke">ห้องคาราโอเกะ</option>
+                                <option value="meeting">ห้องประชุม</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div id="bookingsList">
+                        <!-- Booking cards will be generated here -->
+                    </div>
+                </div>
+
+                <!-- Facilities Page -->
+                <div id="facilitiesPage" class="page-content d-none">
+                    <h3 class="mb-4">สิ่งอำนวยความสะดวก</h3>
+                    <div class="row g-4">
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div>
+                                            <h5 class="card-title">ห้องฟิตเนส</h5>
+                                            <p class="card-text text-muted">อุปกรณ์ครบครัน เครื่องออกกำลังกายทันสมัย</p>
+                                        </div>
+                                        <span class="facility-badge facility-fitness">Active</span>
+                                    </div>
+                                    <div class="row text-center">
+                                        <div class="col">
+                                            <div class="fw-bold">200</div>
+                                            <small class="text-muted">บาท/ชั่วโมง</small>
+                                        </div>
+                                        <div class="col">
+                                            <div class="fw-bold" id="fitnessBookings">0</div>
+                                            <small class="text-muted">การจองวันนี้</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div>
+                                            <h5 class="card-title">ห้องดูหนัง</h5>
+                                            <p class="card-text text-muted">ระบบเสียงและภาพคุณภาพสูง บรรยากาศโรงภาพยนตร์</p>
+                                        </div>
+                                        <span class="facility-badge facility-cinema">Active</span>
+                                    </div>
+                                    <div class="row text-center">
+                                        <div class="col">
+                                            <div class="fw-bold">500</div>
+                                            <small class="text-muted">บาท/ชั่วโมง</small>
+                                        </div>
+                                        <div class="col">
+                                            <div class="fw-bold" id="cinemaBookings">0</div>
+                                            <small class="text-muted">การจองวันนี้</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div>
+                                            <h5 class="card-title">ห้องคาราโอเกะ</h5>
+                                            <p class="card-text text-muted">ระบบเสียงคุณภาพ เพลงล่าสุด ห้องขนาดต่างๆ</p>
+                                        </div>
+                                        <span class="facility-badge facility-karaoke">Active</span>
+                                    </div>
+                                    <div class="row text-center">
+                                        <div class="col">
+                                            <div class="fw-bold">300</div>
+                                            <small class="text-muted">บาท/ชั่วโมง</small>
+                                        </div>
+                                        <div class="col">
+                                            <div class="fw-bold" id="karaokeBookings">0</div>
+                                            <small class="text-muted">การจองวันนี้</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div>
+                                            <h5 class="card-title">ห้องประชุม</h5>
+                                            <p class="card-text text-muted">อุปกรณ์นำเสนอครบครัน เหมาะสำหรับการประชุม</p>
+                                        </div>
+                                        <span class="facility-badge facility-meeting">Active</span>
+                                    </div>
+                                    <div class="row text-center">
+                                        <div class="col">
+                                            <div class="fw-bold">800</div>
+                                            <small class="text-muted">บาท/ชั่วโมง</small>
+                                        </div>
+                                        <div class="col">
+                                            <div class="fw-bold" id="meetingBookings">0</div>
+                                            <small class="text-muted">การจองวันนี้</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Page -->
+                <div id="reportsPage" class="page-content d-none">
+                    <h3 class="mb-4">รายงาน</h3>
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">สรุปรายได้ (ประมาณการ)</h5>
+                                    <div class="row g-3">
+                                        <div class="col-md-3">
+                                            <div class="text-center p-3 bg-light rounded">
+                                                <div class="h4 text-primary mb-1" id="dailyRevenue">฿0</div>
+                                                <div class="text-muted">วันนี้</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="text-center p-3 bg-light rounded">
+                                                <div class="h4 text-success mb-1" id="weeklyRevenue">฿0</div>
+                                                <div class="text-muted">สัปดาห์นี้</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="text-center p-3 bg-light rounded">
+                                                <div class="h4 text-info mb-1" id="monthlyRevenue">฿0</div>
+                                                <div class="text-muted">เดือนนี้</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="text-center p-3 bg-light rounded">
+                                                <div class="h4 text-warning mb-1" id="yearlyRevenue">฿0</div>
+                                                <div class="text-muted">ปีนี้</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Page -->
+                <div id="settingsPage" class="page-content d-none">
+                    <h3 class="mb-4">การตั้งค่า</h3>
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">การตั้งค่าระบบ</h5>
+                                    <form>
+                                        <div class="mb-3">
+                                            <label class="form-label">ชื่อระบบ</label>
+                                            <input type="text" class="form-control" value="BookSpace">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">อีเมลติดต่อ</label>
+                                            <input type="email" class="form-control" value="admin@bookspace.com">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">เบอร์โทรติดต่อ</label>
+                                            <input type="tel" class="form-control" value="02-123-4567">
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="autoApprove">
+                                                <label class="form-check-label" for="autoApprove">
+                                                    อนุมัติการจองอัตโนมัติ
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
+                                                <label class="form-check-label" for="emailNotifications">
+                                                    ส่งการแจ้งเตือนทางอีเมล
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-admin-primary">บันทึกการตั้งค่า</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Details Modal -->
+    <div class="modal fade" id="bookingModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">รายละเอียดการจอง</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="bookingModalBody">
+                    <!-- Booking details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+                    <button type="button" class="btn btn-success" id="approveBtn">อนุมัติ</button>
+                    <button type="button" class="btn btn-danger" id="rejectBtn">ปฏิเสธ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Get database instance
+        let db;
+        if (typeof MockDatabase !== 'undefined') {
+            db = new MockDatabase();
+        } else {
+            // Fallback database for standalone page
+            class FallbackDatabase {
+                constructor() {
+                    this.bookings = JSON.parse(localStorage.getItem('bookings')) || [
+                        {
+                            id: 1,
+                            name: "สมชาย ใจดี",
+                            phone: "081-234-5678",
+                            facility: "fitness",
+                            date: "2025-09-15",
+                            time: "10:00",
+                            duration: "2",
+                            people: "2",
+                            status: "approved",
+                            timestamp: new Date('2025-09-12T09:00:00'),
+                            totalPrice: "400 บาท"
+                        },
+                        {
+                            id: 2,
+                            name: "สมหญิง รักสุข",
+                            phone: "082-345-6789",
+                            facility: "cinema",
+                            date: "2025-09-15",
+                            time: "14:00",
+                            duration: "3",
+                            people: "4",
+                            status: "pending",
+                            timestamp: new Date('2025-09-12T10:30:00'),
+                            totalPrice: "2,400 บาท",
+                            seats: ["A1", "A2", "A3", "A4"]
+                        },
+                        {
+                            id: 3,
+                            name: "วิชาญ เก่งกล้า",
+                            phone: "083-456-7890",
+                            facility: "karaoke",
+                            date: "2025-09-16",
+                            time: "18:00",
+                            duration: "4",
+                            people: "5+",
+                            status: "pending",
+                            timestamp: new Date('2025-09-12T11:15:00'),
+                            totalPrice: "1,200 บาท"
+                        }
+                    ];
+                    this.saveToStorage();
+                }
+                
+                saveToStorage() {
+                    localStorage.setItem('bookings', JSON.stringify(this.bookings));
+                }
+                
+                getAllBookings() {
+                    return [...this.bookings];
+                }
+                
+                updateBooking(id, updates) {
+                    const index = this.bookings.findIndex(b => b.id === id);
+                    if (index !== -1) {
+                        this.bookings[index] = { ...this.bookings[index], ...updates };
+                        this.saveToStorage();
+                        return this.bookings[index];
+                    }
+                    return null;
+                }
+                
+                getStats() {
+                    return {
+                        total: this.bookings.length,
+                        pending: this.bookings.filter(b => b.status === 'pending').length,
+                        approved: this.bookings.filter(b => b.status === 'approved').length,
+                        rejected: this.bookings.filter(b => b.status === 'rejected').length
+                    };
+                }
+                
+                getTodayBookings() {
+                    const today = new Date().toISOString().split('T')[0];
+                    return this.bookings.filter(b => b.date === today);
+                }
+                
+                getRevenue() {
+                    const approved = this.bookings.filter(b => b.status === 'approved');
+                    const extractPrice = (priceStr) => {
+                        return parseInt(priceStr.replace(/[^\d]/g, '')) || 0;
+                    };
+                    
+                    const today = new Date().toISOString().split('T')[0];
+                    const thisWeekStart = new Date();
+                    thisWeekStart.setDate(thisWeekStart.getDate() - thisWeekStart.getDay());
+                    const thisMonth = new Date().getMonth();
+                    const thisYear = new Date().getFullYear();
+                    
+                    return {
+                        daily: approved.filter(b => b.date === today)
+                                     .reduce((sum, b) => sum + extractPrice(b.totalPrice), 0),
+                        weekly: approved.filter(b => new Date(b.date) >= thisWeekStart)
+                                      .reduce((sum, b) => sum + extractPrice(b.totalPrice), 0),
+                        monthly: approved.filter(b => new Date(b.date).getMonth() === thisMonth)
+                                       .reduce((sum, b) => sum + extractPrice(b.totalPrice), 0),
+                        yearly: approved.filter(b => new Date(b.date).getFullYear() === thisYear)
+                                      .reduce((sum, b) => sum + extractPrice(b.totalPrice), 0)
+                    };
+                }
+            }
+            db = new FallbackDatabase();
+        }
+
+        // Admin authentication
+        const ADMIN_CREDENTIALS = {
+            username: 'admin',
+            password: 'admin123'
+        };
+
+        let currentBookingId = null;
+        let isLoggedIn = sessionStorage.getItem('adminLoggedIn') === 'true';
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            if (isLoggedIn) {
+                showDashboard();
+            } else {
+                showLogin();
+            }
+        });
+
+        // Login functionality
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                isLoggedIn = true;
+                showDashboard();
+            } else {
+                showLoginError('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
+            }
+        });
+
+        function showLogin() {
+            document.getElementById('loginScreen').classList.remove('d-none');
+            document.getElementById('adminDashboard').classList.add('d-none');
+        }
+
+        function showDashboard() {
+            document.getElementById('loginScreen').classList.add('d-none');
+            document.getElementById('adminDashboard').classList.remove('d-none');
+            loadDashboardData();
+        }
+
+        function showLoginError(message) {
+            const errorDiv = document.getElementById('loginError');
+            errorDiv.textContent = message;
+            errorDiv.classList.remove('d-none');
+            
+            setTimeout(() => {
+                errorDiv.classList.add('d-none');
+            }, 5000);
+        }
+
+        function logout() {
+            sessionStorage.removeItem('adminLoggedIn');
+            isLoggedIn = false;
+            showLogin();
+            
+            // Reset form
+            document.getElementById('loginForm').reset();
+            document.getElementById('loginError').classList.add('d-none');
+        }
+
+        // Sidebar functionality
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            const sidebar = document.getElementById('adminSidebar');
+            const content = document.getElementById('adminContent');
+            const overlay = document.getElementById('overlay');
+            
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
+            
+            if (window.innerWidth > 768) {
+                content.classList.toggle('sidebar-open');
+            }
+        });
+
+        document.getElementById('overlay').addEventListener('click', function() {
+            document.getElementById('adminSidebar').classList.remove('show');
+            document.getElementById('overlay').classList.remove('show');
+        });
+
+        // Navigation
+        document.querySelectorAll('.admin-nav-link[data-page]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const page = this.dataset.page;
+                navigateToPage(page);
+            });
+        });
+
+        function navigateToPage(page) {
+            // Update active nav
+            document.querySelectorAll('.admin-nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector(`[data-page="${page}"]`).classList.add('active');
+            
+            // Hide all pages
+            document.querySelectorAll('.page-content').forEach(content => {
+                content.classList.add('d-none');
+            });
+            
+            // Show selected page
+            document.getElementById(page + 'Page').classList.remove('d-none');
+            
+            // Update page title
+            const titles = {
+                overview: 'ภาพรวม',
+                bookings: 'จัดการการจอง',
+                facilities: 'สิ่งอำนวยความสะดวก',
+                reports: 'รายงาน',
+                settings: 'การตั้งค่า'
+            };
+            document.getElementById('pageTitle').textContent = titles[page];
+            
+            // Load page data
+            switch (page) {
+                case 'overview':
+                    loadOverviewData();
+                    break;
+                case 'bookings':
+                    loadBookingsData();
+                    break;
+                case 'facilities':
+                    loadFacilitiesData();
+                    break;
+                case 'reports':
+                    loadReportsData();
+                    break;
+            }
+            
+            // Hide sidebar on mobile
+            if (window.innerWidth <= 768) {
+                document.getElementById('adminSidebar').classList.remove('show');
+                document.getElementById('overlay').classList.remove('show');
+            }
+        }
+
+        function loadDashboardData() {
+            loadOverviewData();
+        }
+
+        function loadOverviewData() {
+            const stats = db.getStats();
+            
+            document.getElementById('totalBookingsCount').textContent = stats.total;
+            document.getElementById('pendingBookingsCount').textContent = stats.pending;
+            document.getElementById('approvedBookingsCount').textContent = stats.approved;
+            document.getElementById('rejectedBookingsCount').textContent = stats.rejected;
+            
+            loadRecentBookings();
+        }
+
+        function loadRecentBookings() {
+            const bookings = db.getAllBookings().slice(-10).reverse(); // Last 10 bookings
+            const tableBody = document.getElementById('recentBookingsTable');
+            
+            tableBody.innerHTML = bookings.map(booking => `
+                <tr>
+                    <td>#${booking.id.toString().padStart(3, '0')}</td>
+                    <td>${booking.name}</td>
+                    <td>
+                        <span class="facility-badge facility-${booking.facility}">
+                            ${getFacilityName(booking.facility)}
+                        </span>
+                    </td>
+                    <td>${formatDateThai(booking.date)}</td>
+                    <td>${booking.time}</td>
+                    <td>
+                        <span class="status-badge status-${booking.status}">
+                            ${getStatusText(booking.status)}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" onclick="showBookingDetails(${booking.id})">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                        ${booking.status === 'pending' ? `
+                            <button class="btn btn-sm btn-success" onclick="updateBookingStatus(${booking.id}, 'approved')">
+                                <i class="bi bi-check"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="updateBookingStatus(${booking.id}, 'rejected')">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        ` : ''}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function loadBookingsData() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const facilityFilter = document.getElementById('facilityFilter').value;
+            
+            let bookings = db.getAllBookings();
+            
+            // Apply filters
+            if (statusFilter) {
+                bookings = bookings.filter(b => b.status === statusFilter);
+            }
+            if (facilityFilter) {
+                bookings = bookings.filter(b => b.facility === facilityFilter);
+            }
+            
+            const bookingsList = document.getElementById('bookingsList');
+            
+            if (bookings.length === 0) {
+                bookingsList.innerHTML = '<div class="text-center text-muted py-5">ไม่พบการจอง</div>';
+                return;
+            }
+            
+            bookingsList.innerHTML = bookings.reverse().map(booking => `
+                <div class="booking-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h6 class="mb-1">การจอง #${booking.id.toString().padStart(3, '0')}</h6>
+                                <span class="facility-badge facility-${booking.facility}">
+                                    ${getFacilityName(booking.facility)}
+                                </span>
+                            </div>
+                            <span class="status-badge status-${booking.status}">
+                                ${getStatusText(booking.status)}
+                            </span>
+                        </div>
+                        
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <strong>ผู้จอง:</strong> ${booking.name}<br>
+                                <strong>โทร:</strong> ${booking.phone}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>วันที่:</strong> ${formatDateThai(booking.date)}<br>
+                                <strong>เวลา:</strong> ${booking.time} (${booking.duration} ชั่วโมง)
+                            </div>
+                        </div>
+                        
+                        ${booking.seats ? `
+                            <div class="mb-3">
+                                <strong>ที่นั่ง:</strong> ${booking.seats.join(', ')}
+                            </div>
+                        ` : ''}
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong class="text-primary">${booking.totalPrice}</strong>
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn btn-sm btn-outline-primary" onclick="showBookingDetails(${booking.id})">
+                                    <i class="bi bi-eye"></i> รายละเอียด
+                                </button>
+                                ${booking.status === 'pending' ? `
+                                    <button class="btn btn-sm btn-success" onclick="updateBookingStatus(${booking.id}, 'approved')">
+                                        <i class="bi bi-check"></i> อนุมัติ
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="updateBookingStatus(${booking.id}, 'rejected')">
+                                        <i class="bi bi-x"></i> ปฏิเสธ
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadFacilitiesData() {
+            const todayBookings = db.getTodayBookings();
+            
+            document.getElementById('fitnessBookings').textContent = 
+                todayBookings.filter(b => b.facility === 'fitness').length;
+            document.getElementById('cinemaBookings').textContent = 
+                todayBookings.filter(b => b.facility === 'cinema').length;
+            document.getElementById('karaokeBookings').textContent = 
+                todayBookings.filter(b => b.facility === 'karaoke').length;
+            document.getElementById('meetingBookings').textContent = 
+                todayBookings.filter(b => b.facility === 'meeting').length;
+        }
+
+        function loadReportsData() {
+            const revenue = db.getRevenue();
+            
+            document.getElementById('dailyRevenue').textContent = `฿${revenue.daily.toLocaleString()}`;
+            document.getElementById('weeklyRevenue').textContent = `฿${revenue.weekly.toLocaleString()}`;
+            document.getElementById('monthlyRevenue').textContent = `฿${revenue.monthly.toLocaleString()}`;
+            document.getElementById('yearlyRevenue').textContent = `฿${revenue.yearly.toLocaleString()}`;
+        }
+
+        // Filter event listeners
+        document.getElementById('statusFilter').addEventListener('change', loadBookingsData);
+        document.getElementById('facilityFilter').addEventListener('change', loadBookingsData);
+
+        // Booking management functions
+        function showBookingDetails(bookingId) {
+            const booking = db.getAllBookings().find(b => b.id === bookingId);
+            if (!booking) return;
+            
+            currentBookingId = bookingId;
+            
+            const modalBody = document.getElementById('bookingModalBody');
+            modalBody.innerHTML = `
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <h6>ข้อมูลการจอง</h6>
+                        <table class="table table-sm">
+                            <tr><td>หมายเลข:</td><td>#${booking.id.toString().padStart(3, '0')}</td></tr>
+                            <tr><td>สิ่งอำนวยความสะดวก:</td><td>${getFacilityName(booking.facility)}</td></tr>
+                            <tr><td>วันที่:</td><td>${formatDateThai(booking.date)}</td></tr>
+                            <tr><td>เวลา:</td><td>${booking.time}</td></tr>
+                            <tr><td>ระยะเวลา:</td><td>${booking.duration} ชั่วโมง</td></tr>
+                            <tr><td>จำนวนผู้ใช้:</td><td>${booking.people} คน</td></tr>
+                            ${booking.seats ? `<tr><td>ที่นั่ง:</td><td>${booking.seats.join(', ')}</td></tr>` : ''}
+                            <tr><td>สถานะ:</td><td><span class="status-badge status-${booking.status}">${getStatusText(booking.status)}</span></td></tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>ข้อมูลผู้จอง</h6>
+                        <table class="table table-sm">
+                            <tr><td>ชื่อ:</td><td>${booking.name}</td></tr>
+                            <tr><td>โทรศัพท์:</td><td>${booking.phone}</td></tr>
+                            ${booking.email ? `<tr><td>อีเมล:</td><td>${booking.email}</td></tr>` : ''}
+                            <tr><td>จองเมื่อ:</td><td>${formatDateTime(booking.timestamp)}</td></tr>
+                            <tr><td>ราคารวม:</td><td class="fw-bold text-primary">${booking.totalPrice}</td></tr>
+                        </table>
+                        ${booking.notes ? `
+                            <h6>หมายเหตุ</h6>
+                            <p class="text-muted">${booking.notes}</p>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            
+            // Update modal buttons
+            const approveBtn = document.getElementById('approveBtn');
+            const rejectBtn = document.getElementById('rejectBtn');
+            
+            if (booking.status === 'pending') {
+                approveBtn.style.display = 'inline-block';
+                rejectBtn.style.display = 'inline-block';
+            } else {
+                approveBtn.style.display = 'none';
+                rejectBtn.style.display = 'none';
+            }
+            
+            const modal = new bootstrap.Modal(document.getElementById('bookingModal'));
+            modal.show();
+        }
+
+        function updateBookingStatus(bookingId, status) {
+            const booking = db.updateBooking(bookingId, { status });
+            if (booking) {
+                // Refresh current page data
+                const currentPage = document.querySelector('.admin-nav-link.active').dataset.page;
+                navigateToPage(currentPage);
+                
+                // Hide modal if open
+                const modal = bootstrap.Modal.getInstance(document.getElementById('bookingModal'));
+                if (modal) {
+                    modal.hide();
+                }
+                
+                // Show success message
+                showAlert(`อัปเดตสถานะการจองเป็น "${getStatusText(status)}" เรียบร้อยแล้ว`, 'success');
+            }
+        }
+
+        // Modal button handlers
+        document.getElementById('approveBtn').addEventListener('click', function() {
+            if (currentBookingId) {
+                updateBookingStatus(currentBookingId, 'approved');
+            }
+        });
+
+        document.getElementById('rejectBtn').addEventListener('click', function() {
+            if (currentBookingId) {
+                updateBookingStatus(currentBookingId, 'rejected');
+            }
+        });
+
+        // Utility functions
+        function getFacilityName(facility) {
+            const names = {
+                fitness: 'ห้องฟิตเนส',
+                cinema: 'ห้องดูหนัง',
+                karaoke: 'ห้องคาราโอเกะ',
+                meeting: 'ห้องประชุม'
+            };
+            return names[facility] || facility;
+        }
+
+        function getStatusText(status) {
+            const texts = {
+                pending: 'รอการอนุมัติ',
+                approved: 'อนุมัติแล้ว',
+                rejected: 'ปฏิเสธแล้ว'
+            };
+            return texts[status] || status;
+        }
+
+        function formatDateThai(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('th-TH', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        function formatDateTime(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleString('th-TH', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function showAlert(message, type) {
+            // Create and show Bootstrap alert
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            alertDiv.style.top = '20px';
+            alertDiv.style.right = '20px';
+            alertDiv.style.zIndex = '9999';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+
+        // Responsive sidebar handling
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                document.getElementById('overlay').classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>

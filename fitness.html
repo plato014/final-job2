@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ห้องฟิตเนส - BookSpace</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #ecf0f1;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --fitness-color: #e74c3c;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffffff;
+            color: #2c3e50;
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color) !important;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, var(--fitness-color) 0%, #c0392b 100%);
+            color: white;
+            padding: 4rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="%23ffffff" opacity="0.1"><polygon points="1000,100 1000,0 0,100"/></svg>');
+            background-size: cover;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .feature-card {
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--fitness-color);
+            margin-bottom: 1rem;
+        }
+
+        .btn-fitness {
+            background: linear-gradient(45deg, var(--fitness-color), #c0392b);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-fitness:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            color: white;
+        }
+
+        .gallery-img {
+            height: 250px;
+            object-fit: cover;
+            border-radius: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-img:hover {
+            transform: scale(1.05);
+        }
+
+        .pricing-card {
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-card:hover {
+            border-color: var(--fitness-color);
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(231, 76, 60, 0.2);
+        }
+
+        .pricing-card.featured {
+            border-color: var(--fitness-color);
+            transform: scale(1.05);
+        }
+
+        .pricing-badge {
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            background: var(--fitness-color);
+            color: white;
+            padding: 5px 40px;
+            transform: rotate(45deg);
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .booking-form {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            padding: 2rem;
+        }
+
+        .time-slot {
+            border: 2px solid #e9ecef;
+            padding: 15px;
+            text-align: center;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .time-slot:hover {
+            border-color: var(--fitness-color);
+            background-color: rgba(231, 76, 60, 0.1);
+        }
+
+        .time-slot.selected {
+            border-color: var(--fitness-color);
+            background-color: var(--fitness-color);
+            color: white;
+        }
+
+        .time-slot.unavailable {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .time-slot.unavailable:hover {
+            border-color: #e9ecef;
+            background-color: #f8f9fa;
+        }
+
+        .alert-custom {
+            border-radius: 15px;
+            border: none;
+        }
+
+        .footer {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #34495e 100%);
+            color: white;
+            padding: 3rem 0 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .page-header {
+                padding: 2rem 0;
+            }
+            
+            .page-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="bi bi-building"></i> BookSpace
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">หน้าแรก</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown">
+                            สิ่งอำนวยความสะดวก
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item active" href="fitness.html"><i class="bi bi-heart-pulse"></i> ห้องฟิตเนส</a></li>
+                            <li><a class="dropdown-item" href="cinema.html"><i class="bi bi-camera-reels"></i> ห้องดูหนัง</a></li>
+                            <li><a class="dropdown-item" href="karaoke.html"><i class="bi bi-mic"></i> ห้องคาราโอเกะ</a></li>
+                            <li><a class="dropdown-item" href="meeting.html"><i class="bi bi-people"></i> ห้องประชุม</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html#about">เกี่ยวกับเรา</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html#contact">ติดต่อเรา</a>
+                    </li>
+                </ul>
+                <div class="navbar-nav">
+                    <a class="nav-link btn btn-outline-primary px-3 rounded-pill me-2" href="admin.html">
+                        <i class="bi bi-gear"></i> Admin
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <div class="header-content text-center">
+                <div class="display-1 mb-3">🏋️‍♂️</div>
+                <h1 class="display-4 fw-bold mb-3">ห้องฟิตเนส</h1>
+                <p class="lead mb-4">อุปกรณ์ครบครัน เครื่องออกกำลังกายทันสมัย พร้อมเทรนเนอร์มืออาชีพ</p>
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="d-flex justify-content-center gap-4 text-center">
+                            <div>
+                                <div class="h3 mb-1">200</div>
+                                <small>บาท/ชั่วโมง</small>
+                            </div>
+                            <div>
+                                <div class="h3 mb-1">24/7</div>
+                                <small>เปิดบริการ</small>
+                            </div>
+                            <div>
+                                <div class="h3 mb-1">50+</div>
+                                <small>เครื่องออกกำลังกาย</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-6 fw-bold mb-3">สิ่งที่คุณจะได้รับ</h2>
+                <p class="lead text-muted">ห้องฟิตเนสระดับพรีเมียมพร้อมสิ่งอำนวยความสะดวกครบครัน</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="card feature-card">
+                        <div class="card-body text-center p-4">
+                            <div class="feature-icon">💪</div>
+                            <h4 class="card-title mb-3">เครื่องออกกำลังกายทันสมัย</h4>
+                            <p class="card-text text-muted">
+                                เครื่องออกกำลังกายนำเข้าจากต่างประเทศ ทันสมัย และปลอดภัย
+                                ครอบคลุมทุกการออกกำลังกาย
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="card feature-card">
+                        <div class="card-body text-center p-4">
+                            <div class="feature-icon">🏆</div>
+                            <h4 class="card-title mb-3">เทรนเนอร์มืออาชีพ</h4>
+                            <p class="card-text text-muted">
+                                ทีมเทรนเนอร์ที่มีประสบการณ์และได้รับการรับรอง
+                                พร้อมให้คำปรึกษาและวางแผนการออกกำลังกาย
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="card feature-card">
+                        <div class="card-body text-center p-4">
+                            <div class="feature-icon">🌿</div>
+                            <h4 class="card-title mb-3">สะอาดและปลอดภัย</h4>
+                            <p class="card-text text-muted">
+                                ทำความสะอาดอย่างสม่ำเสมอ ระบบระบายอากาศดี
+                                และมีมาตรการรักษาความปลอดภัยอย่างเข้มงวด
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="card feature-card">
+                        <div class="card-body text-center p-4">
+                            <div class="feature-icon">🎵</div>
+                            <h4 class="card-title mb-3">ระบบเสียงคุณภาพสูง</h4>
+                            <p class="card-text text-muted">
+                                เพลงเพื่อการออกกำลังกายคุณภาพสูง
+                                สร้างบรรยากาศที่เหมาะสำหรับการเพิ่มพลังในการออกกำลังกาย
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="card feature-card">
+                        <div class="card-body text-center p-4">
+                            <div class="feature-icon">🚿</div>
+                            <h4 class="card-title mb-3">ห้องแต่งตัวและอาบน้ำ</h4>
+                            <p class="card-text text-muted">
+                                ห้องแต่งตัวและห้องอาบน้ำที่สะอาด พร้อมล็อกเกอร์
+                                และสิ่งอำนวยความสะดวกครบครัน
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="card feature-card">
+                        <div class="card-body text-center p-4">
+                            <div class="feature-icon">📱</div>
+                            <h4 class="card-title mb-3">Wi-Fi ความเร็วสูง</h4>
+                            <p class="card-text text-muted">
+                                อินเทอร์เน็ตความเร็วสูงฟรี เพื่อการสตรีมมิ่งเพลง
+                                หรือติดตามโปรแกรมการออกกำลังกายออนไลน์
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-6 fw-bold mb-3">ชมภาพห้องฟิตเนส</h2>
+                <p class="lead text-muted">สัมผัสบรรยากาศการออกกำลังกายระดับพรีเมียม</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=250&fit=crop" 
+                         class="img-fluid gallery-img w-100" alt="ห้องฟิตเนสหลัก">
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=250&fit=crop" 
+                         class="img-fluid gallery-img w-100" alt="เครื่องออกกำลังกาย">
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=250&fit=crop" 
+                         class="img-fluid gallery-img w-100" alt="พื้นที่ยกน้ำหนัก">
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <img src="img/car(1).webp" 
+                         class="img-fluid gallery-img w-100" alt="เครื่องคาร์ดิโอ">
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <img src="https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=400&h=250&fit=crop" 
+                         class="img-fluid gallery-img w-100" alt="ห้องแต่งตัว">
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <img src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=400&h=250&fit=crop" 
+                         class="img-fluid gallery-img w-100" alt="พื้นที่โยคะ">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-6 fw-bold mb-3">แพ็กเกจการใช้งาน</h2>
+                <p class="lead text-muted">เลือกแพ็กเกจที่เหมาะสมกับความต้องการของคุณ</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="card pricing-card h-100">
+                        <div class="card-body p-4 text-center">
+                            <h4 class="card-title mb-3">รายชั่วโมง</h4>
+                            <div class="display-4 text-fitness-color fw-bold mb-2">200</div>
+                            <p class="text-muted mb-4">บาท/ชั่วโมง</p>
+                            <ul class="list-unstyled mb-4">
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> ใช้งานทุกเครื่องออกกำลังกาย</li>
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> ห้องแต่งตัวและอาบน้ำ</li>
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> Wi-Fi ฟรี</li>
+                                <li class="mb-2"><i class="bi bi-x text-muted"></i> เทรนเนอร์ส่วนตัว</li>
+                            </ul>
+                            <button class="btn btn-outline-fitness w-100" onclick="selectPackage('hourly', 200)">
+                                เลือกแพ็กเกจนี้
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="card pricing-card featured h-100">
+                        <div class="pricing-badge">ยอดนิยม</div>
+                        <div class="card-body p-4 text-center">
+                            <h4 class="card-title mb-3">แพ็กเกจครึ่งวัน</h4>
+                            <div class="display-4 text-fitness-color fw-bold mb-2">750</div>
+                            <p class="text-muted mb-4">บาท/4 ชั่วโมง</p>
+                            <ul class="list-unstyled mb-4">
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> ใช้งานทุกเครื่องออกกำลังกาย</li>
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> ห้องแต่งตัวและอาบน้ำ</li>
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> Wi-Fi ฟรี</li>
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> เทรนเนอร์ส่วนตัว 1 ชั่วโมง</li>
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> เครื่องดื่มโปรตีน 1 แก้ว</li>
+                            </ul>
+                            <button class="btn btn-fitness w-100" onclick="selectPackage('halfday', 750)">
+                                เลือกแพ็กเกจนี้
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="card pricing-card h-100">
+                        <div class="card-body p-4 text-center">
+                            <h4 class="card-title mb-3">แพ็กเกจเต็มวัน</h4>
+                            <div class="display-4 text-fitness-color fw-bold mb-2">1,400</div>
+                            <p class="text-muted mb-4">บาท/8 ชั่วโมง</p>
+                            <ul class="list-unstyled mb-4">
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> ใช้งานทุกเครื่องออกกำลังกาย</li>
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> ห้องแต่งตัวและอาบน้ำ</li>
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> Wi-Fi ฟรี</li>
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> เทรนเนอร์ส่วนตัว 2 ชั่วโมง</li>
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> มื้อกลางวันเพื่อสุขภาพ</li>
+                            </ul>
+                            <button class="btn btn-outline-fitness w-100" onclick="selectPackage('fullday', 1400)">
+                                เลือกแพ็กเกจนี้
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Section -->
+    <section class="py-5 bg-light" id="booking">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-6 fw-bold mb-3">จองห้องฟิตเนส</h2>
+                <p class="lead text-muted">เลือกวันที่และเวลาที่คุณต้องการใช้งาน</p>
+            </div>
+            
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="booking-form">
+                        <div class="alert alert-info alert-custom d-none" id="bookingAlert"></div>
+                        <div class="alert alert-danger alert-custom d-none" id="errorAlert"></div>
+                        
+                        <form id="bookingForm">
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="date" class="form-control" id="bookingDate" required>
+                                        <label for="bookingDate">วันที่ต้องการใช้งาน</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="duration" required>
+                                            <option value="">เลือกระยะเวลา</option>
+                                            <option value="1">1 ชั่วโมง (200 บาท)</option>
+                                            <option value="2">2 ชั่วโมง (400 บาท)</option>
+                                            <option value="3">3 ชั่วโมง (600 บาท)</option>
+                                            <option value="4">4 ชั่วโมง - แพ็กเกจครึ่งวัน (750 บาท)</option>
+                                            <option value="8">8 ชั่วโมง - แพ็กเกจเต็มวัน (1,400 บาท)</option>
+                                        </select>
+                                        <label for="duration">ระยะเวลาการใช้งาน</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Time Slots -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">เลือกเวลาเริ่มต้น</label>
+                                <div class="row g-2" id="timeSlots">
+                                    <!-- Time slots will be generated here -->
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="people" required>
+                                            <option value="">จำนวนผู้ใช้งาน</option>
+                                            <option value="1">1 คน</option>
+                                            <option value="2">2 คน</option>
+                                            <option value="3">3 คน</option>
+                                            <option value="4">4 คน</option>
+                                            <option value="5+">5+ คน</option>
+                                        </select>
+                                        <label for="people">จำนวนผู้ใช้งาน</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="trainer">
+                                            <option value="no">ไม่ต้องการ</option>
+                                            <option value="yes">ต้องการเทรนเนอร์ (+500 บาท/ชั่วโมง)</option>
+                                        </select>
+                                        <label for="trainer">เทรนเนอร์ส่วนตัว</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <h5 class="mb-3">ข้อมูลผู้จอง</h5>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="fullName" required>
+                                        <label for="fullName">ชื่อ-นามสกุล</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="tel" class="form-control" id="phone" required>
+                                        <label for="phone">เบอร์โทรศัพท์</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-floating mb-4">
+                                <input type="email" class="form-control" id="email">
+                                <label for="email">อีเมล (ไม่บังคับ)</label>
+                            </div>
+
+                            <div class="form-floating mb-4">
+                                <textarea class="form-control" id="notes" style="height: 100px"></textarea>
+                                <label for="notes">หมายเหตุเพิ่มเติม (ไม่บังคับ)</label>
+                            </div>
+
+                            <!-- Booking Summary -->
+                            <div class="card bg-light mb-4" id="bookingSummary" style="display: none;">
+                                <div class="card-body">
+                                    <h6 class="card-title">สรุปการจอง</h6>
+                                    <div id="summaryDetails"></div>
+                                    <hr>
+                                    <div class="d-flex justify-content-between">
+                                        <strong>ราคารวม:</strong>
+                                        <strong class="text-fitness-color" id="totalPrice">0 บาท</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-fitness btn-lg">
+                                    <i class="bi bi-calendar-check"></i> ยืนยันการจอง
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <h5 class="mb-3">
+                        <i class="bi bi-building"></i> BookSpace
+                    </h5>
+                    <p class="mb-3">
+                        แพลตฟอร์มจองสิ่งอำนวยความสะดวกออนไลน์ที่ทันสมัย
+                        เพื่อความสะดวกสบายของคุณ
+                    </p>
+                </div>
+                
+                <div class="col-lg-2">
+                    <h6 class="mb-3">สิ่งอำนวยความสะดวก</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="fitness.html" class="text-light text-decoration-none">ห้องฟิตเนส</a></li>
+                        <li class="mb-2"><a href="cinema.html" class="text-light text-decoration-none">ห้องดูหนัง</a></li>
+                        <li class="mb-2"><a href="karaoke.html" class="text-light text-decoration-none">ห้องคาราโอเกะ</a></li>
+                        <li class="mb-2"><a href="meeting.html" class="text-light text-decoration-none">ห้องประชุม</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-3">
+                    <h6 class="mb-3">ติดต่อเรา</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="bi bi-telephone"></i> 02-123-4567</li>
+                        <li class="mb-2"><i class="bi bi-envelope"></i> info@bookspace.com</li>
+                        <li class="mb-2"><i class="bi bi-geo-alt"></i> 123 ถนนสุขุมวิท กรุงเทพฯ</li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-3">
+                    <h6 class="mb-3">เวลาทำการ</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">จันทร์ - ศุกร์: 06:00 - 24:00</li>
+                        <li class="mb-2">เสาร์ - อาทิตย์: 06:00 - 24:00</li>
+                        <li class="mb-2">วันหยุดนักขัตฤกษ์: 08:00 - 22:00</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <hr class="my-4">
+            
+            <div class="text-center">
+                <p class="mb-0">&copy; 2025 BookSpace. สงวนลิขสิทธิ์ทุกประการ</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-check-circle"></i> จองสำเร็จ!
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="display-1 text-success mb-3">✅</div>
+                    <h4>ขอบคุณที่ใช้บริการ!</h4>
+                    <p class="mb-3">การจองของคุณได้รับการบันทึกเรียบร้อยแล้ว</p>
+                    <div class="alert alert-info">
+                        <strong>หมายเลขการจอง:</strong> #<span id="modalBookingId"></span><br>
+                        <strong>สถานะ:</strong> รอการอนุมัติ
+                    </div>
+                    <p class="small text-muted">
+                        เราจะติดต่อกลับภายใน 30 นาที เพื่อยืนยันการจองของคุณ
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+                    <a href="index.html" class="btn btn-primary">กลับหน้าหลัก</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Get database instance
+        let db;
+        if (typeof MockDatabase !== 'undefined') {
+            db = new MockDatabase();
+        } else {
+            // Fallback database for standalone page
+            class FallbackDatabase {
+                constructor() {
+                    this.bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+                }
+                
+                saveToStorage() {
+                    localStorage.setItem('bookings', JSON.stringify(this.bookings));
+                }
+                
+                addBooking(booking) {
+                    const newBooking = {
+                        ...booking,
+                        id: this.bookings.length > 0 ? Math.max(...this.bookings.map(b => b.id)) + 1 : 1,
+                        timestamp: new Date(),
+                        status: 'pending'
+                    };
+                    this.bookings.push(newBooking);
+                    this.saveToStorage();
+                    return newBooking;
+                }
+                
+                isTimeSlotAvailable(facility, date, startTime, duration) {
+                    const requestStart = parseInt(startTime.split(':')[0]);
+                    const requestEnd = requestStart + parseInt(duration);
+
+                    return !this.bookings.some(booking => {
+                        if (booking.facility !== facility || booking.date !== date || booking.status !== 'approved') {
+                            return false;
+                        }
+
+                        const bookingStart = parseInt(booking.time.split(':')[0]);
+                        const bookingEnd = bookingStart + parseInt(booking.duration);
+
+                        return (requestStart < bookingEnd && requestEnd > bookingStart);
+                    });
+                }
+            }
+            db = new FallbackDatabase();
+        }
+
+        let selectedTimeSlot = null;
+        let selectedPackage = null;
+
+        // Time slots available
+        const timeSlots = [
+            '06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'
+        ];
+
+        // Set minimum date to today
+        document.getElementById('bookingDate').min = new Date().toISOString().split('T')[0];
+
+        // Package selection
+        function selectPackage(type, price) {
+            selectedPackage = { type, price };
+            
+            // Update duration dropdown based on package
+            const durationSelect = document.getElementById('duration');
+            if (type === 'halfday') {
+                durationSelect.value = '4';
+            } else if (type === 'fullday') {
+                durationSelect.value = '8';
+            }
+            
+            // Scroll to booking section
+            document.getElementById('booking').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+            
+            updateBookingSummary();
+        }
+
+        // Generate time slots
+        function generateTimeSlots() {
+            const timeSlotsContainer = document.getElementById('timeSlots');
+            const date = document.getElementById('bookingDate').value;
+            const duration = document.getElementById('duration').value;
+            
+            if (!date || !duration) {
+                timeSlotsContainer.innerHTML = '<p class="text-muted">กรุณาเลือกวันที่และระยะเวลาก่อน</p>';
+                return;
+            }
+            
+            timeSlotsContainer.innerHTML = '';
+            
+            timeSlots.forEach(time => {
+                const isAvailable = db.isTimeSlotAvailable('fitness', date, time, duration);
+                const timeSlotDiv = document.createElement('div');
+                timeSlotDiv.className = 'col-6 col-md-4 col-lg-3';
+                
+                const timeSlotButton = document.createElement('div');
+                timeSlotButton.className = `time-slot ${!isAvailable ? 'unavailable' : ''}`;
+                timeSlotButton.innerHTML = `
+                    <strong>${time}</strong><br>
+                    <small>${!isAvailable ? 'ไม่ว่าง' : 'ว่าง'}</small>
+                `;
+                
+                if (isAvailable) {
+                    timeSlotButton.addEventListener('click', () => selectTimeSlot(time, timeSlotButton));
+                }
+                
+                timeSlotDiv.appendChild(timeSlotButton);
+                timeSlotsContainer.appendChild(timeSlotDiv);
+            });
+        }
+
+        function selectTimeSlot(time, element) {
+            // Remove previous selection
+            document.querySelectorAll('.time-slot.selected').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+            
+            // Add selection to clicked element
+            element.classList.add('selected');
+            selectedTimeSlot = time;
+            
+            updateBookingSummary();
+        }
+
+        function updateBookingSummary() {
+            const date = document.getElementById('bookingDate').value;
+            const duration = document.getElementById('duration').value;
+            const people = document.getElementById('people').value;
+            const trainer = document.getElementById('trainer').value;
+            
+            if (!date || !duration || !selectedTimeSlot || !people) {
+                document.getElementById('bookingSummary').style.display = 'none';
+                return;
+            }
+            
+            // Calculate price
+            let basePrice = 0;
+            let durationText = '';
+            
+            if (duration === '4' && selectedPackage?.type === 'halfday') {
+                basePrice = 750;
+                durationText = '4 ชั่วโมง (แพ็กเกจครึ่งวัน)';
+            } else if (duration === '8' && selectedPackage?.type === 'fullday') {
+                basePrice = 1400;
+                durationText = '8 ชั่วโมง (แพ็กเกจเต็มวัน)';
+            } else {
+                basePrice = parseInt(duration) * 200;
+                durationText = `${duration} ชั่วโมง`;
+            }
+            
+            let trainerPrice = 0;
+            if (trainer === 'yes') {
+                trainerPrice = parseInt(duration) * 500;
+            }
+            
+            const totalPrice = basePrice + trainerPrice;
+            
+            // Update summary
+            const summaryDetails = document.getElementById('summaryDetails');
+            summaryDetails.innerHTML = `
+                <p><strong>วันที่:</strong> ${formatDateThai(date)}</p>
+                <p><strong>เวลา:</strong> ${selectedTimeSlot} - ${calculateEndTime(selectedTimeSlot, duration)}</p>
+                <p><strong>ระยะเวลา:</strong> ${durationText}</p>
+                <p><strong>จำนวนผู้ใช้:</strong> ${people} คน</p>
+                <p><strong>ราคาฐาน:</strong> ${basePrice.toLocaleString()} บาท</p>
+                ${trainer === 'yes' ? `<p><strong>เทรนเนอร์ส่วนตัว:</strong> ${trainerPrice.toLocaleString()} บาท</p>` : ''}
+            `;
+            
+            document.getElementById('totalPrice').textContent = `${totalPrice.toLocaleString()} บาท`;
+            document.getElementById('bookingSummary').style.display = 'block';
+        }
+
+        function formatDateThai(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('th-TH', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long'
+            });
+        }
+
+        function calculateEndTime(startTime, duration) {
+            const [hours, minutes] = startTime.split(':').map(Number);
+            const endHour = hours + parseInt(duration);
+            return `${endHour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+        }
+
+        // Event listeners
+        document.getElementById('bookingDate').addEventListener('change', generateTimeSlots);
+        document.getElementById('duration').addEventListener('change', () => {
+            selectedTimeSlot = null;
+            generateTimeSlots();
+            updateBookingSummary();
+        });
+        
+        document.getElementById('people').addEventListener('change', updateBookingSummary);
+        document.getElementById('trainer').addEventListener('change', updateBookingSummary);
+
+        // Form submission
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!selectedTimeSlot) {
+                showAlert('กรุณาเลือกเวลาที่ต้องการใช้งาน', 'danger');
+                return;
+            }
+            
+            const formData = new FormData(this);
+            const bookingData = {
+                facility: 'fitness',
+                name: document.getElementById('fullName').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+                date: document.getElementById('bookingDate').value,
+                time: selectedTimeSlot,
+                duration: document.getElementById('duration').value,
+                people: document.getElementById('people').value,
+                trainer: document.getElementById('trainer').value,
+                notes: document.getElementById('notes').value,
+                totalPrice: document.getElementById('totalPrice').textContent
+            };
+            
+            // Check availability one more time
+            if (!db.isTimeSlotAvailable('fitness', bookingData.date, bookingData.time, bookingData.duration)) {
+                showAlert('ขออภัย เวลาที่เลือกไม่ว่างแล้ว กรุณาเลือกเวลาใหม่', 'danger');
+                generateTimeSlots();
+                return;
+            }
+            
+            // Save booking
+            const newBooking = db.addBooking(bookingData);
+            
+            // Show success modal
+            document.getElementById('modalBookingId').textContent = newBooking.id.toString().padStart(3, '0');
+            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+            successModal.show();
+            
+            // Reset form
+            this.reset();
+            selectedTimeSlot = null;
+            selectedPackage = null;
+            document.getElementById('bookingSummary').style.display = 'none';
+            document.getElementById('timeSlots').innerHTML = '';
+            
+            // Hide alerts
+            document.getElementById('bookingAlert').classList.add('d-none');
+            document.getElementById('errorAlert').classList.add('d-none');
+        });
+
+        function showAlert(message, type) {
+            const alertElement = type === 'danger' ? 
+                document.getElementById('errorAlert') : 
+                document.getElementById('bookingAlert');
+            
+            alertElement.textContent = message;
+            alertElement.classList.remove('d-none');
+            
+            // Hide after 5 seconds
+            setTimeout(() => {
+                alertElement.classList.add('d-none');
+            }, 5000);
+            
+            // Scroll to alert
+            alertElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // CSS fix for button colors
+        const style = document.createElement('style');
+        style.textContent = `
+            .btn-outline-fitness {
+                border-color: var(--fitness-color);
+                color: var(--fitness-color);
+            }
+            .btn-outline-fitness:hover {
+                background-color: var(--fitness-color);
+                color: white;
+            }
+            .text-fitness-color {
+                color: var(--fitness-color) !important;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

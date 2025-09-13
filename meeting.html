@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ห้องประชุม - BookSpace</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #ecf0f1;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --meeting-color: #8e44ad;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffffff;
+            color: #2c3e50;
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color) !important;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, var(--meeting-color) 0%, #9b59b6 100%);
+            color: white;
+            padding: 4rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="%23ffffff" opacity="0.1"><polygon points="1000,100 1000,0 0,100"/></svg>');
+            background-size: cover;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .feature-card {
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--meeting-color);
+            margin-bottom: 1rem;
+        }
+
+        .btn-meeting {
+            background: linear-gradient(45deg, var(--meeting-color), #9b59b6);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-meeting:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            color: white;
+        }
+
+        .room-card {
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .room-card:hover {
+            border-color: var(--meeting-color);
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(142, 68, 173, 0.2);
+        }
+
+        .room-card.featured {
+            border-color: var(--meeting-color);
+            transform: scale(1.05);
+        }
+
+        .room-badge {
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            background: var(--meeting-color);
+            color: white;
+            padding: 5px 40px;
+            transform: rotate(45deg);
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .booking-form {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            padding: 2rem;
+        }
+
+        .time-slot {
+            border: 2px solid #e9ecef;
+            padding: 15px;
+            text-align: center;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .time-slot:hover {
+            border-color: var(--meeting-color);
+            background-color: rgba(142, 68, 173, 0.1);
+        }
+
+        .time-slot.selected {
+            border-color: var(--meeting-color);
+            background-color: var(--meeting-color);
+            color: white;
+        }
+
+        .time-slot.unavailable {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .time-slot.unavailable:hover {
+            border-color: #e9ecef;
+            background-color: #f8f9fa;
+        }
+
+        .equipment-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .equipment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .equipment-icon {
+            font-size: 2.5rem;
+            color: var(--meeting-color);
+            margin-bottom: 1rem;
+        }
+
+        .capacity-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 1rem 0;
+        }
+
+        .capacity-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--meeting-color);
+        }
+
+        .alert-custom {
+            border-radius: 15px;
+            border: none;
+        }
+
+        .footer {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #34495e 100%);
+            color: white;
+            padding: 3rem 0 2rem;
+        }
+
+        .gallery-img {
+            height: 250px;
+            object-fit: cover;
+            border-radius: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-img:hover {
+            transform: scale(1.05);
+        }
+
+        .service-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .service-item:hover {
+            background: rgba(142, 68, 173, 0.1);
+        }
+
+        .service-icon {
+            font-size: 1.5rem;
+            color: var(--meeting-color);
+            margin-right: 15px;
+            min-width: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .page-header {
+                padding: 2rem 0;
+            }
+            
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .capacity-indicator {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="bi bi-building"></i> BookSpace
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">หน้าแรก</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown">
+                            สิ่งอำนวยความสะดวก
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="fitness.html"><i class="bi bi-heart-pulse"></i> ห้องฟิตเนส</a></li>
+                            <li><a class="dropdown-item" href="cinema.html"><i class="bi bi-camera-reels"></i> ห้องดูหนัง</a></li>
+                            <li><a class="dropdown-item" href="karaoke.html"><i class="bi bi-mic"></i> ห้องคาราโอเกะ</a></li>
+                            <li><a class="dropdown-item active" href="meeting.html"><i class="bi bi-people"></i> ห้องประชุม</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html#about">เกี่ยวกับเรา</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html#contact">ติดต่อเรา</a>
+                    </li>
+                </ul>
+                <div class="navbar-nav">
+                    <a class="nav-link btn btn-outline-primary px-3 rounded-pill me-2" href="admin.html">
+                        <i class="bi bi-gear"></i> Admin
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <div class="header-content text-center">
+                <div class="display-1 mb-3">👥</div>
+                <h1 class="display-4 fw-bold mb-3">ห้องประชุม</h1>
+                <p class="lead mb-4">ห้องประชุมมาตรฐานระดับสากล พร้อมอุปกรณ์นำเสนอครบครัน และเทคโนโลยีทันสมัย</p>
+                <div class="row justify-content-center">
+                    <div class="col-md-10">
+                        <div class="d-flex justify-content-center gap-4 text-center flex-wrap">
+                            <div>
+                                <div class="h3 mb-1">800</div>
+                                <small>บาท/ชั่วโมง</small>
+                            </div>
+                            <div>
+                                <div class="h3 mb-1">3</div>
+                                <small>ห้องขนาดต่างๆ</small>
+                            </div>
+                            <div>
+                                <div class="h3 mb-1">50</div>
+                                <small>คน (สูงสุด)</small>
+                            </div>
+                            <div>
+                                <div class="h3 mb-1">24/7</div>
+                                <small>พร้อมใช้งาน</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Room Types Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-6 fw-bold mb-3">เลือกห้องประชุมที่เหมาะสม</h2>
+                <p class="lead text-muted">ห้องประชุม 3 แบบ รองรับงานประชุมทุกรูปแบบ</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="card room-card h-100">
+                        <div class="card-body p-4 text-center">
+                            <div class="room-icon display-4 mb-3">🏢</div>
+                            <h3 class="card-title mb-3">ห้องประชุมเล็ก</h3>
+                            <div class="capacity-indicator">
+                                <i class="bi bi-people-fill text-meeting-color"></i>
+                                <span>2-8 คน</span>
+                            </div>
+                            <div class="display-5 text-meeting-color fw-bold mb-2">800</div>
+                            <p class="text-muted mb-4">บาท/ชั่วโมง</p>
+                            
+                            <ul class="list-unstyled mb-4 text-start">
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> โต๊ะประชุมสำหรับ 8 คน</li>
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> จอ LED 55 นิ้ว</li>
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> ระบบเสียงคุณภาพสูง</li>
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> เครื่องฉายโปรเจคเตอร์</li>
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> Wi-Fi ความเร็วสูง</li>
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> กระดานไวท์บอร์ด</li>
+                            </ul>
+                            
+                            <button class="btn btn-meeting w-100" onclick="selectRoom('small', 800, '2-8 คน')">
+                                <i class="bi bi-calendar-plus"></i> จองห้องนี้
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="card room-card featured h-100">
+                        <div class="room-badge">ยอดนิยม</div>
+                        <div class="card-body p-4 text-center">
+                            <div class="room-icon display-4 mb-3">🏛️</div>
+                            <h3 class="card-title mb-3">ห้องประชุมกลาง</h3>
+                            <div class="capacity-indicator">
+                                <i class="bi bi-people-fill text-meeting-color"></i>
+                                <span>10-20 คน</span>
+                            </div>
+                            <div class="display-5 text-meeting-color fw-bold mb-2">1,200</div>
+                            <p class="text-muted mb-4">บาท/ชั่วโมง</p>
+                            
+                            <ul class="list-unstyled mb-4 text-start">
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> โต๊ะประชุมสำหรับ 20 คน</li>
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> จอ LED 75 นิ้ว</li>
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> ระบบเสียงรอบทิศทาง</li>
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> กล้องสำหรับ Video Call</li>
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> ระบบแสงไฟอัจฉริยะ</li>
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> เครื่องดื่มและขนมว่าง</li>
+                            </ul>
+                            
+                            <button class="btn btn-meeting w-100" onclick="selectRoom('medium', 1200, '10-20 คน')">
+                                <i class="bi bi-calendar-plus"></i> จองห้องนี้
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="card room-card h-100">
+                        <div class="card-body p-4 text-center">
+                            <div class="room-icon display-4 mb-3">🏰</div>
+                            <h3 class="card-title mb-3">ห้องประชุมใหญ่</h3>
+                            <div class="capacity-indicator">
+                                <i class="bi bi-people-fill text-meeting-color"></i>
+                                <span>25-50 คน</span>
+                            </div>
+                            <div class="display-5 text-meeting-color fw-bold mb-2">2,000</div>
+                            <p class="text-muted mb-4">บาท/ชั่วโมง</p>
+                            
+                            <ul class="list-unstyled mb-4 text-start">
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> ห้องโถงขนาดใหญ่</li>
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> จอ LED 100 นิ้ว</li>
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> ระบบเสียงคอนเสิร์ต</li>
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> เวทีสำหรับนำเสนอ</li>
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> ระบบไฟสปอตไลท์</li>
+                                <li class="mb-2"><i class="bi bi-check text-success"></i> บุฟเฟ่ต์เบรกครบครัน</li>
+                            </ul>
+                            
+                            <button class="btn btn-meeting w-100" onclick="selectRoom('large', 2000, '25-50 คน')">
+                                <i class="bi bi-calendar-plus"></i> จองห้องนี้
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Equipment Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-6 fw-bold mb-3">อุปกรณ์และสิ่งอำนวยความสะดวก</h2>
+                <p class="lead text-muted">ครบครันด้วยเทคโนโลยีทันสมัยเพื่อการประชุมที่มีประสิทธิภาพ</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="equipment-card">
+                        <div class="equipment-icon">💻</div>
+                        <h5>เทคโนโลยี</h5>
+                        <ul class="list-unstyled small">
+                            <li>• จอ LED คมชัดสูง</li>
+                            <li>• เครื่องฉาย 4K</li>
+                            <li>• ระบบ Video Conference</li>
+                            <li>• Wi-Fi ความเร็วสูง</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6">
+                    <div class="equipment-card">
+                        <div class="equipment-icon">🎤</div>
+                        <h5>ระบบเสียง</h5>
+                        <ul class="list-unstyled small">
+                            <li>• ไมโครโฟนไร้สาย</li>
+                            <li>• ลำโพงคุณภาพสูง</li>
+                            <li>• ระบบควบคุมเสียง</li>
+                            <li>• หูฟังสำหรับแปล</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6">
+                    <div class="equipment-card">
+                        <div class="equipment-icon">🪑</div>
+                        <h5>เฟอร์นิเจอร์</h5>
+                        <ul class="list-unstyled small">
+                            <li>• เก้าอี้หนังแท้</li>
+                            <li>• โต๊ะประชุมไม้สัก</li>
+                            <li>• กระดานไวท์บอร์ด</li>
+                            <li>• ตู้เก็บเอกสาร</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6">
+                    <div class="equipment-card">
+                        <div class="equipment-icon">☕</div>
+                        <h5>บริการเสริม</h5>
+                        <ul class="list-unstyled small">
+                            <li>• เครื่องดื่มและขนมว่าง</li>
+                            <li>• บริการจดบันทึกการประชุม</li>
+                            <li>• เจ้าหน้าที่ช่วยเหลือ</li>
+                            <li>• ที่จอดรถฟรี</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-6 fw-bold mb-3">ชมภาพห้องประชุม</h2>
+                <p class="lead text-muted">บรรยากาศการประชุมระดับมืออาชีพ</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=250&fit=crop" 
+                         class="img-fluid gallery-img w-100" alt="ห้องประชุมกลาง">
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=250&fit=crop" 
+                         class="img-fluid gallery-img w-100" alt="ห้องประชุมใหญ่">
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <img src="img/ระบบนำเสนอ.jpg" 
+                         class="img-fluid gallery-img w-100" alt="ระบบนำเสนอ">
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <img src="img/ห้องประชุมเล็ก.jpg" 
+                         class="img-fluid gallery-img w-100" alt="ห้องประชุมเล็ก">
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <img src="img/อุปกรณ์เทคโนโลยี.jpg" 
+                         class="img-fluid gallery-img w-100" alt="อุปกรณ์เทคโนโลยี">
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop" 
+                         class="img-fluid gallery-img w-100" alt="พื้นที่พักผ่อน">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-6 fw-bold mb-3">บริการเพิ่มเติม</h2>
+                <p class="lead text-muted">บริการครบครันเพื่อการประชุมที่สมบูรณ์แบบ</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="service-item">
+                        <div class="service-icon">🍽️</div>
+                        <div>
+                            <h6 class="mb-1">บริการจัดเลี้ยง</h6>
+                            <small class="text-muted">อาหารว่าง เครื่องดื่ม และอาหารกลางวัน</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="service-item">
+                        <div class="service-icon">📋</div>
+                        <div>
+                            <h6 class="mb-1">บันทึกการประชุม</h6>
+                            <small class="text-muted">บริการจดบันทึกและสรุปผลการประชุม</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="service-item">
+                        <div class="service-icon">🚗</div>
+                        <div>
+                            <h6 class="mb-1">ที่จอดรถฟรี</h6>
+                            <small class="text-muted">ที่จอดรถใต้อาคาร ปลอดภัย มีรักษาความปลอดภัย</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="service-item">
+                        <div class="service-icon">🎯</div>
+                        <div>
+                            <h6 class="mb-1">เจ้าหน้าที่ช่วยเหลือ</h6>
+                            <small class="text-muted">พนักงานช่วยเหลือด้านเทคนิคตลอดการใช้งาน</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="service-item">
+                        <div class="service-icon">📱</div>
+                        <div>
+                            <h6 class="mb-1">ระบบจอง Online</h6>
+                            <small class="text-muted">จองผ่านเว็บไซต์ได้ตลอด 24 ชั่วโมง</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="service-item">
+                        <div class="service-icon">🔒</div>
+                        <div>
+                            <h6 class="mb-1">ความปลอดภัย</h6>
+                            <small class="text-muted">ระบบรักษาความปลอดภัยและ keycard เข้าออก</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Section -->
+    <section class="py-5" id="booking">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-6 fw-bold mb-3">จองห้องประชุม</h2>
+                <p class="lead text-muted">เลือกห้อง วันที่ และเวลาที่คุณต้องการ</p>
+            </div>
+            
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="booking-form">
+                        <div class="alert alert-info alert-custom d-none" id="bookingAlert"></div>
+                        <div class="alert alert-danger alert-custom d-none" id="errorAlert"></div>
+                        
+                        <form id="bookingForm">
+                            <!-- Room Selection -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">เลือกห้องประชุม</label>
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <div class="room-option" data-room="small" data-price="800" data-capacity="2-8 คน">
+                                            <div class="card text-center h-100">
+                                                <div class="card-body">
+                                                    <div class="display-6 mb-2">🏢</div>
+                                                    <h6>ห้องเล็ก</h6>
+                                                    <small class="text-muted">2-8 คน<br>800 บาท/ชม.</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="room-option" data-room="medium" data-price="1200" data-capacity="10-20 คน">
+                                            <div class="card text-center h-100">
+                                                <div class="card-body">
+                                                    <div class="display-6 mb-2">🏛️</div>
+                                                    <h6>ห้องกลาง</h6>
+                                                    <small class="text-muted">10-20 คน<br>1,200 บาท/ชม.</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="room-option" data-room="large" data-price="2000" data-capacity="25-50 คน">
+                                            <div class="card text-center h-100">
+                                                <div class="card-body">
+                                                    <div class="display-6 mb-2">🏰</div>
+                                                    <h6>ห้องใหญ่</h6>
+                                                    <small class="text-muted">25-50 คน<br>2,000 บาท/ชม.</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="date" class="form-control" id="bookingDate" required>
+                                        <label for="bookingDate">วันที่ต้องการใช้งาน</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="duration" required>
+                                            <option value="">เลือกระยะเวลา</option>
+                                            <option value="1">1 ชั่วโมง</option>
+                                            <option value="2">2 ชั่วโมง</option>
+                                            <option value="3">3 ชั่วโมง</option>
+                                            <option value="4">4 ชั่วโมง</option>
+                                            <option value="6">6 ชั่วโมง (ครึ่งวัน)</option>
+                                            <option value="8">8 ชั่วโมง (เต็มวัน)</option>
+                                        </select>
+                                        <label for="duration">ระยะเวลาการใช้งาน</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Time Slots -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">เลือกเวลาเริ่มต้น</label>
+                                <div class="row g-2" id="timeSlots">
+                                    <!-- Time slots will be generated here -->
+                                </div>
+                            </div>
+
+                            <!-- Meeting Details -->
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="attendees" required>
+                                            <option value="">จำนวนผู้เข้าร่วม</option>
+                                            <option value="2-5">2-5 คน</option>
+                                            <option value="6-10">6-10 คน</option>
+                                            <option value="11-20">11-20 คน</option>
+                                            <option value="21-30">21-30 คน</option>
+                                            <option value="31-50">31-50 คน</option>
+                                        </select>
+                                        <label for="attendees">จำนวนผู้เข้าร่วมประชุม</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="meetingType">
+                                            <option value="business">ประชุมธุรกิจ</option>
+                                            <option value="presentation">งานนำเสนอ</option>
+                                            <option value="seminar">สัมมนา</option>
+                                            <option value="workshop">อบรม/ฝึกอบรม</option>
+                                            <option value="interview">สัมภาษณ์งาน</option>
+                                            <option value="other">อื่นๆ</option>
+                                        </select>
+                                        <label for="meetingType">ประเภทการประชุม</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Additional Services -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">บริการเสริม (เลือกได้หลายรายการ)</label>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="catering" value="500">
+                                            <label class="form-check-label" for="catering">
+                                                🍽️ บริการจัดเลี้ยง (+500 บาท)
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="recording" value="300">
+                                            <label class="form-check-label" for="recording">
+                                                📹 บันทึกภาพ/เสียง (+300 บาท)
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="translation" value="800">
+                                            <label class="form-check-label" for="translation">
+                                                🌐 บริการแปลภาษา (+800 บาท)
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="technical" value="200">
+                                            <label class="form-check-label" for="technical">
+                                                🔧 เจ้าหน้าที่เทคนิค (+200 บาท)
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <h5 class="mb-3">ข้อมูลผู้จอง</h5>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="fullName" required>
+                                        <label for="fullName">ชื่อ-นามสกุล</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="company">
+                                        <label for="company">บริษัท/องค์กร (ไม่บังคับ)</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="tel" class="form-control" id="phone" required>
+                                        <label for="phone">เบอร์โทรศัพท์</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="email" class="form-control" id="email" required>
+                                        <label for="email">อีเมล</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-floating mb-4">
+                                <textarea class="form-control" id="meetingDetails" style="height: 100px"></textarea>
+                                <label for="meetingDetails">รายละเอียดการประชุม / ความต้องการพิเศษ</label>
+                            </div>
+
+                            <!-- Booking Summary -->
+                            <div class="card bg-light mb-4" id="bookingSummary" style="display: none;">
+                                <div class="card-header">
+                                    <h6 class="mb-0">สรุปการจอง</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div id="summaryDetails"></div>
+                                    <hr>
+                                    <div class="d-flex justify-content-between">
+                                        <strong>ราคารวมทั้งสิ้น:</strong>
+                                        <strong class="text-meeting-color" id="totalPrice">0 บาท</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-meeting btn-lg">
+                                    <i class="bi bi-calendar-check"></i> ยืนยันการจอง
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <h5 class="mb-3">
+                        <i class="bi bi-building"></i> BookSpace
+                    </h5>
+                    <p class="mb-3">
+                        แพลตฟอร์มจองสิ่งอำนวยความสะดวกออนไลน์ที่ทันสมัย
+                        เพื่อความสะดวกสบายของคุณ
+                    </p>
+                </div>
+                
+                <div class="col-lg-2">
+                    <h6 class="mb-3">สิ่งอำนวยความสะดวก</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="fitness.html" class="text-light text-decoration-none">ห้องฟิตเนส</a></li>
+                        <li class="mb-2"><a href="cinema.html" class="text-light text-decoration-none">ห้องดูหนัง</a></li>
+                        <li class="mb-2"><a href="karaoke.html" class="text-light text-decoration-none">ห้องคาราโอเกะ</a></li>
+                        <li class="mb-2"><a href="meeting.html" class="text-light text-decoration-none">ห้องประชุม</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-3">
+                    <h6 class="mb-3">ติดต่อเรา</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="bi bi-telephone"></i> 02-123-4567</li>
+                        <li class="mb-2"><i class="bi bi-envelope"></i> info@bookspace.com</li>
+                        <li class="mb-2"><i class="bi bi-geo-alt"></i> 123 ถนนสุขุมวิท กรุงเทพฯ</li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-3">
+                    <h6 class="mb-3">เวลาทำการ</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">จันทร์ - ศุกร์: 06:00 - 24:00</li>
+                        <li class="mb-2">เสาร์ - อาทิตย์: 06:00 - 24:00</li>
+                        <li class="mb-2">วันหยุดนักขัตฤกษ์: 08:00 - 22:00</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <hr class="my-4">
+            
+            <div class="text-center">
+                <p class="mb-0">&copy; 2025 BookSpace. สงวนลิขสิทธิ์ทุกประการ</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-check-circle"></i> จองสำเร็จ!
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <div class="display-1 text-success mb-3">✅</div>
+                        <h4>ขอบคุณที่เลือกใช้บริการ!</h4>
+                        <p class="mb-3">การจองห้องประชุมของคุณได้รับการบันทึกเรียบร้อยแล้ว</p>
+                    </div>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="alert alert-info">
+                                <strong><i class="bi bi-bookmark"></i> หมายเลขการจอง:</strong><br>
+                                #<span id="modalBookingId"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="alert alert-warning">
+                                <strong><i class="bi bi-clock"></i> สถานะ:</strong><br>
+                                รอการอนุมัติ
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-light">
+                        <h6><i class="bi bi-info-circle"></i> ขั้นตอนถัดไป:</h6>
+                        <ol class="mb-0">
+                            <li>เจ้าหน้าที่จะติดต่อกลับภายใน 1 ชั่วโมง</li>
+                            <li>ยืนยันรายละเอียดและชำระเงินมัดจำ 50%</li>
+                            <li>ได้รับอีเมลยืนยันการจอง</li>
+                            <li>เข้าใช้งานตามเวลาที่กำหนด</li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+                    <a href="index.html" class="btn btn-primary">กลับหน้าหลัก</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Get database instance
+        let db;
+        if (typeof MockDatabase !== 'undefined') {
+            db = new MockDatabase();
+        } else {
+            // Fallback database for standalone page
+            class FallbackDatabase {
+                constructor() {
+                    this.bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+                }
+                
+                saveToStorage() {
+                    localStorage.setItem('bookings', JSON.stringify(this.bookings));
+                }
+                
+                addBooking(booking) {
+                    const newBooking = {
+                        ...booking,
+                        id: this.bookings.length > 0 ? Math.max(...this.bookings.map(b => b.id)) + 1 : 1,
+                        timestamp: new Date(),
+                        status: 'pending'
+                    };
+                    this.bookings.push(newBooking);
+                    this.saveToStorage();
+                    return newBooking;
+                }
+                
+                isTimeSlotAvailable(facility, date, startTime, duration) {
+                    const requestStart = parseInt(startTime.split(':')[0]);
+                    const requestEnd = requestStart + parseInt(duration);
+
+                    return !this.bookings.some(booking => {
+                        if (booking.facility !== facility || booking.date !== date || booking.status !== 'approved') {
+                            return false;
+                        }
+
+                        const bookingStart = parseInt(booking.time.split(':')[0]);
+                        const bookingEnd = bookingStart + parseInt(booking.duration);
+
+                        return (requestStart < bookingEnd && requestEnd > bookingStart);
+                    });
+                }
+            }
+            db = new FallbackDatabase();
+        }
+
+        let selectedTimeSlot = null;
+        let selectedRoom = null;
+
+        // Time slots available
+        const timeSlots = [
+            '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', 
+            '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'
+        ];
+
+        const roomPrices = {
+            'small': 800,
+            'medium': 1200,
+            'large': 2000
+        };
+
+        const roomNames = {
+            'small': 'ห้องประชุมเล็ก',
+            'medium': 'ห้องประชุมกลาง',
+            'large': 'ห้องประชุมใหญ่'
+        };
+
+        // Set minimum date to today
+        document.getElementById('bookingDate').min = new Date().toISOString().split('T')[0];
+
+        // Room selection
+        document.addEventListener('DOMContentLoaded', function() {
+            const roomOptions = document.querySelectorAll('.room-option');
+            roomOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove previous selection
+                    roomOptions.forEach(opt => opt.classList.remove('selected'));
+                    
+                    // Add selection
+                    this.classList.add('selected');
+                    selectedRoom = {
+                        type: this.dataset.room,
+                        price: parseInt(this.dataset.price),
+                        capacity: this.dataset.capacity
+                    };
+                    
+                    generateTimeSlots();
+                    updateBookingSummary();
+                });
+            });
+        });
+
+        function selectRoom(type, price, capacity) {
+            selectedRoom = { type, price, capacity };
+            
+            // Scroll to booking section
+            document.getElementById('booking').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+            
+            // Select room option
+            document.querySelectorAll('.room-option').forEach(option => {
+                option.classList.remove('selected');
+                if (option.dataset.room === type) {
+                    option.classList.add('selected');
+                }
+            });
+            
+            updateBookingSummary();
+        }
+
+        // Generate time slots
+        function generateTimeSlots() {
+            const timeSlotsContainer = document.getElementById('timeSlots');
+            const date = document.getElementById('bookingDate').value;
+            const duration = document.getElementById('duration').value;
+            
+            if (!selectedRoom || !date || !duration) {
+                timeSlotsContainer.innerHTML = '<p class="text-muted">กรุณาเลือกห้อง วันที่ และระยะเวลาก่อน</p>';
+                return;
+            }
+            
+            timeSlotsContainer.innerHTML = '';
+            
+            timeSlots.forEach(time => {
+                const facilityName = `meeting_${selectedRoom.type}`;
+                const isAvailable = db.isTimeSlotAvailable(facilityName, date, time, duration);
+                const timeSlotDiv = document.createElement('div');
+                timeSlotDiv.className = 'col-6 col-md-4 col-lg-3';
+                
+                const timeSlotButton = document.createElement('div');
+                timeSlotButton.className = `time-slot ${!isAvailable ? 'unavailable' : ''}`;
+                timeSlotButton.innerHTML = `
+                    <strong>${time}</strong><br>
+                    <small>${!isAvailable ? 'ไม่ว่าง' : 'ว่าง'}</small>
+                `;
+                
+                if (isAvailable) {
+                    timeSlotButton.addEventListener('click', () => selectTimeSlot(time, timeSlotButton));
+                }
+                
+                timeSlotDiv.appendChild(timeSlotButton);
+                timeSlotsContainer.appendChild(timeSlotDiv);
+            });
+        }
+
+        function selectTimeSlot(time, element) {
+            // Remove previous selection
+            document.querySelectorAll('.time-slot.selected').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+            
+            // Add selection to clicked element
+            element.classList.add('selected');
+            selectedTimeSlot = time;
+            
+            updateBookingSummary();
+        }
+
+        function updateBookingSummary() {
+            const date = document.getElementById('bookingDate').value;
+            const duration = document.getElementById('duration').value;
+            const attendees = document.getElementById('attendees').value;
+            
+            if (!selectedRoom || !date || !duration || !selectedTimeSlot || !attendees) {
+                document.getElementById('bookingSummary').style.display = 'none';
+                return;
+            }
+            
+            // Calculate base price
+            let basePrice = selectedRoom.price * parseInt(duration);
+            let durationText = `${duration} ชั่วโมง`;
+            
+            // Calculate additional services
+            let additionalServices = 0;
+            let servicesList = [];
+            
+            const services = ['catering', 'recording', 'translation', 'technical'];
+            services.forEach(service => {
+                const checkbox = document.getElementById(service);
+                if (checkbox && checkbox.checked) {
+                    const servicePrice = parseInt(checkbox.value);
+                    additionalServices += servicePrice;
+                    
+                    const serviceNames = {
+                        'catering': 'บริการจัดเลี้ยง',
+                        'recording': 'บันทึกภาพ/เสียง',
+                        'translation': 'บริการแปลภาษา',
+                        'technical': 'เจ้าหน้าที่เทคนิค'
+                    };
+                    servicesList.push(`${serviceNames[service]}: ${servicePrice.toLocaleString()} บาท`);
+                }
+            });
+            
+            const totalPrice = basePrice + additionalServices;
+            
+            // Update summary
+            const summaryDetails = document.getElementById('summaryDetails');
+            summaryDetails.innerHTML = `
+                <p><strong>ห้อง:</strong> ${roomNames[selectedRoom.type]} (${selectedRoom.capacity})</p>
+                <p><strong>วันที่:</strong> ${formatDateThai(date)}</p>
+                <p><strong>เวลา:</strong> ${selectedTimeSlot} - ${calculateEndTime(selectedTimeSlot, duration)}</p>
+                <p><strong>ระยะเวลา:</strong> ${durationText}</p>
+                <p><strong>จำนวนผู้เข้าร่วม:</strong> ${attendees} คน</p>
+                <p><strong>ราคาห้อง:</strong> ${basePrice.toLocaleString()} บาท</p>
+                ${servicesList.length > 0 ? `<p><strong>บริการเสริม:</strong><br>${servicesList.join('<br>')}</p>` : ''}
+            `;
+            
+            document.getElementById('totalPrice').textContent = `${totalPrice.toLocaleString()} บาท`;
+            document.getElementById('bookingSummary').style.display = 'block';
+        }
+
+        function formatDateThai(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('th-TH', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long'
+            });
+        }
+
+        function calculateEndTime(startTime, duration) {
+            const [hours, minutes] = startTime.split(':').map(Number);
+            const endHour = hours + parseInt(duration);
+            return `${endHour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+        }
+
+        // Event listeners
+        document.getElementById('bookingDate').addEventListener('change', generateTimeSlots);
+        document.getElementById('duration').addEventListener('change', () => {
+            selectedTimeSlot = null;
+            generateTimeSlots();
+            updateBookingSummary();
+        });
+        
+        document.getElementById('attendees').addEventListener('change', updateBookingSummary);
+        
+        // Additional services checkboxes
+        ['catering', 'recording', 'translation', 'technical'].forEach(service => {
+            const checkbox = document.getElementById(service);
+            if (checkbox) {
+                checkbox.addEventListener('change', updateBookingSummary);
+            }
+        });
+
+        // Form submission
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!selectedRoom) {
+                showAlert('กรุณาเลือกห้องประชุมก่อน', 'danger');
+                return;
+            }
+            
+            if (!selectedTimeSlot) {
+                showAlert('กรุณาเลือกเวลาที่ต้องการใช้งาน', 'danger');
+                return;
+            }
+            
+            const additionalServices = [];
+            ['catering', 'recording', 'translation', 'technical'].forEach(service => {
+                const checkbox = document.getElementById(service);
+                if (checkbox && checkbox.checked) {
+                    additionalServices.push(service);
+                }
+            });
+            
+            const bookingData = {
+                facility: `meeting_${selectedRoom.type}`,
+                roomType: selectedRoom.type,
+                name: document.getElementById('fullName').value,
+                company: document.getElementById('company').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+                date: document.getElementById('bookingDate').value,
+                time: selectedTimeSlot,
+                duration: document.getElementById('duration').value,
+                attendees: document.getElementById('attendees').value,
+                meetingType: document.getElementById('meetingType').value,
+                meetingDetails: document.getElementById('meetingDetails').value,
+                additionalServices: additionalServices,
+                totalPrice: document.getElementById('totalPrice').textContent
+            };
+            
+            // Check availability one more time
+            const facilityName = `meeting_${selectedRoom.type}`;
+            if (!db.isTimeSlotAvailable(facilityName, bookingData.date, bookingData.time, bookingData.duration)) {
+                showAlert('ขออภัย เวลาที่เลือกไม่ว่างแล้ว กรุณาเลือกเวลาใหม่', 'danger');
+                generateTimeSlots();
+                return;
+            }
+            
+            // Save booking
+            const newBooking = db.addBooking(bookingData);
+            
+            // Show success modal
+            document.getElementById('modalBookingId').textContent = newBooking.id.toString().padStart(3, '0');
+            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+            successModal.show();
+            
+            // Reset form
+            this.reset();
+            selectedTimeSlot = null;
+            selectedRoom = null;
+            document.getElementById('bookingSummary').style.display = 'none';
+            document.getElementById('timeSlots').innerHTML = '';
+            document.querySelectorAll('.room-option').forEach(opt => opt.classList.remove('selected'));
+            
+            // Hide alerts
+            document.getElementById('bookingAlert').classList.add('d-none');
+            document.getElementById('errorAlert').classList.add('d-none');
+        });
+
+        function showAlert(message, type) {
+            const alertElement = type === 'danger' ? 
+                document.getElementById('errorAlert') : 
+                document.getElementById('bookingAlert');
+            
+            alertElement.textContent = message;
+            alertElement.classList.remove('d-none');
+            
+            // Hide after 5 seconds
+            setTimeout(() => {
+                alertElement.classList.add('d-none');
+            }, 5000);
+            
+            // Scroll to alert
+            alertElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // CSS fix for button colors and room selection
+        const style = document.createElement('style');
+        style.textContent = `
+            .btn-outline-meeting {
+                border-color: var(--meeting-color);
+                color: var(--meeting-color);
+            }
+            .btn-outline-meeting:hover {
+                background-color: var(--meeting-color);
+                color: white;
+            }
+            .text-meeting-color {
+                color: var(--meeting-color) !important;
+            }
+            .room-option {
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+            .room-option:hover .card {
+                border-color: var(--meeting-color);
+                box-shadow: 0 5px 15px rgba(142, 68, 173, 0.2);
+            }
+            .room-option.selected .card {
+                border-color: var(--meeting-color);
+                background-color: rgba(142, 68, 173, 0.1);
+                box-shadow: 0 8px 25px rgba(142, 68, 173, 0.3);
+            }
+            .room-option .card {
+                border: 2px solid #e9ecef;
+                transition: all 0.3s ease;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
